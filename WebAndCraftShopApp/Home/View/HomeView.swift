@@ -25,21 +25,31 @@ struct HomeView: View {
            ScrollView{
             LazyVStack
             {
-                CategoryListView(categorys: $viewModel.categoryList)
-                BannerListView(banners: $viewModel.bannerList)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack{
-                        ForEach(viewModel.products,id:\.id) { product in
-                            ProductAdaptorView(product: product, cartItemCount: viewModel.getNumberOfitemsInTheCart(item: product), isFavorite: viewModel.isFavoriteItem(item: product)) { product, isAdd in
-                                viewModel.addOrRemoveCartItem(item: product, isAdd: isAdd)
-                            } addOrRemoveFavoriteItem: { product in
-                                viewModel.addOrRemoveFromFavorite(item: product)
+                ForEach(viewModel.dynamicSectionType,id:\.self){ section in
+                    switch section{
+                    case .category:
+                        CategoryListView(categorys: $viewModel.categoryList)
+                    case .banners:
+                        BannerListView(banners: $viewModel.bannerList)
+                    case .products:
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            LazyHStack{
+                                ForEach(viewModel.products,id:\.id) { product in
+                                    ProductAdaptorView(product: product, cartItemCount: viewModel.getNumberOfitemsInTheCart(item: product), isFavorite: viewModel.isFavoriteItem(item: product)) { product, isAdd in
+                                        viewModel.addOrRemoveCartItem(item: product, isAdd: isAdd)
+                                    } addOrRemoveFavoriteItem: { product in
+                                        viewModel.addOrRemoveFromFavorite(item: product)
+                                    }
+                                   
+                                }
+                                Rectangle().foregroundColor(Color.clear).frame(width: 20, height: 20)
                             }
-                           
                         }
-                        Rectangle().foregroundColor(Color.clear).frame(width: 20, height: 20)
                     }
                 }
+               
+               
+                
                 Rectangle().foregroundColor(Color.clear).frame(width: 20, height: 20)
             }
            }.padding([.leading],18)

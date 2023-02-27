@@ -9,24 +9,27 @@ import Foundation
 import SwiftUI
 struct HomeModelManger {
     
-    func getHomeMasterDatas(compleation:@escaping(_ category:[CategoryDisplayModel],_ banners:[BannersDisplayModel],_ product:[ProductsDisplayModel]) -> Void)
+    func getHomeMasterDatas(compleation:@escaping(_ category:[CategoryDisplayModel],_ banners:[BannersDisplayModel],_ product:[ProductsDisplayModel],_ sectionType:[HomeMasterDataType]) -> Void)
     {
         DispatchQueue(label: "api-Queue").async {
             ApiManager.shared.getShopMasterData { errorMessage, resposeDataModel in
                 let result = getToupleDataFromMasterData(masterData: resposeDataModel)
-                compleation(result.category,result.banners,result.product)
+                compleation(result.category,result.banners,result.product, result.sectionType)
             }
         }
        
     }
 }
 extension HomeModelManger{
-    private func getToupleDataFromMasterData(masterData:ShopMasterDataModel?) -> (category:[CategoryDisplayModel],banners:[BannersDisplayModel],product:[ProductsDisplayModel])
+    private func getToupleDataFromMasterData(masterData:ShopMasterDataModel?) -> (category:[CategoryDisplayModel],banners:[BannersDisplayModel],product:[ProductsDisplayModel],sectionType:[HomeMasterDataType])
     {
         var category:[CategoryDisplayModel] = []
         var banners:[BannersDisplayModel] = []
         var product:[ProductsDisplayModel] = []
+        var sectionType:[HomeMasterDataType] = []
         if let masterData = masterData {
+            // making section as dinamicaly.
+            sectionType = (masterData.homeData ?? []).compactMap({HomeMasterDataType.getType(string:$0.type ?? "")})
             for data in masterData.homeData ?? []
             {
                if let type = HomeMasterDataType.getType(string: data.type ?? "")
@@ -43,7 +46,7 @@ extension HomeModelManger{
                }
         }
         }
-        return (category:category,banners:banners,product:product)
+        return (category:category,banners:banners,product:product,sectionType:sectionType)
     }
 }
 

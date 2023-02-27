@@ -12,6 +12,8 @@ final class HomeViewModel:ObservableObject{
     @Published var categoryList:[CategoryDisplayModel] = []
     @Published var bannerList:[BannersDisplayModel] = []
     @Published var products:[ProductsDisplayModel] = []
+    // making section as dynamicaly
+    @Published var dynamicSectionType:[HomeMasterDataType] = []
     @Published var selectedCartItem:[ProductsDisplayModel] = []{
         didSet
         {
@@ -24,11 +26,12 @@ final class HomeViewModel:ObservableObject{
     var isViewDidLoad:Bool = false
     func getMasterListApiData()
     {
-        HomeModelManger().getHomeMasterDatas { category, banners, product in
+        HomeModelManger().getHomeMasterDatas { category, banners, product,sectionType in
             DispatchQueue.main.async { [weak self] in
                 self?.categoryList = category
                 self?.bannerList = banners
                 self?.products = product
+                self?.dynamicSectionType = sectionType
             }
         }
     }
